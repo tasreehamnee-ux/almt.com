@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة العمل الموحدة | وزارة الشباب والرياضة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* شاشة الدخول */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #e94560, #c73e54);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .login-card h1 {
+            color: #fff;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .login-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 20px;
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+            letter-spacing: 4px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: normal;
+            font-size: 16px;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #e94560;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e94560, #c73e54);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(233, 69, 96, 0.4);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-msg.show {
+            opacity: 1;
+        }
+
+        /* لوحة التحكم */
+        .dashboard {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .dashboard-header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px 30px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .link-card.blue::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .link-card.green::before {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+        }
+
+        .link-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .link-card.blue .card-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .link-card.green .card-icon {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .link-card h3 {
+            font-size: 22px;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .link-card p {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .go-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .link-card.blue .go-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .link-card.green .go-btn {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .go-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .logout-btn:hover {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        @media (max-width: 600px) {
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- شاشة الدخول -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-icon">🔐</div>
+            <h1>منصة العمل الموحدة</h1>
+            <p>وزارة الشباب والرياضة - قسم المتابعة والتقييم</p>
+
+            <input type="password" class="login-input" id="accessCode" placeholder="أدخل رمز الدخول" maxlength="10">
+
+            <button class="login-btn" onclick="checkLogin()">دخول المنصة</button>
+            <div class="error-msg" id="errorMsg">رمز الدخول غير صحيح</div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div class="dashboard" id="dashboard">
+        <button class="logout-btn" onclick="logout()">🚪 تسجيل خروج</button>
+
+        <div class="dashboard-header">
+            <h1>أهلاً بك في لوحة التحكم</h1>
+            <p>اختر التطبيق الذي تريد العمل عليه</p>
+        </div>
+
+        <div class="links-grid">
+            <!-- رابط التقارير -->
+            <a href="https://tasreehamnee-ux.github.io/ansh.in/" target="_blank" class="link-card blue">
+                <div class="card-icon">📋</div>
+                <h3>استمارة تقرير الأعمال</h3>
+                <p>نموذج التقارير الشهرية والإنجازات الرسمية لوزارة الشباب والرياضة</p>
+                <span class="go-btn">فتح التطبيق ←</span>
+            </a>
+
+            <!-- رابط الحضور -->
+            <a href="https://tasreehamnee-ux.github.io/hdo.com/" target="_blank" class="link-card green">
+                <div class="card-icon">✅</div>
+                <h3>نظام الحضور والغياب</h3>
+                <p>متابعة الدوام الأسبوعي والتصاريح الأمنية للموظفين</p>
+                <span class="go-btn">فتح التطبيق ←</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            وزارة الشباب والرياضة - قسم المتابعة والتقييم © 2026
+        </div>
+    </div>
+
+    <script>
+        function checkLogin() {
+            const code = document.getElementById('accessCode').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (code === 'ALMT123') {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.add('active');
+            } else {
+                errorMsg.classList.add('show');
+                document.getElementById('accessCode').style.borderColor = '#ff6b6b';
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                    document.getElementById('accessCode').style.borderColor = 'rgba(255,255,255,0.1)';
+                }, 3000);
+            }
+        }
+
+        document.getElementById('accessCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        function logout() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('accessCode').value = '';
+        }
+    </script>
+
+</body>
+</html>
